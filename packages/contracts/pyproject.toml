@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "madara-swap-contracts"
+version = "0.1.0"
+description = ""
+authors = ["Clément Walter <clement0walter@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "scripts" }]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.10"
+cairo-lang = "^0.11.2"
+openzeppelin-cairo-contracts = "^0.6.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+isort = "^5.12.0"
+python-dotenv = "^0.21.0"
+autoflake = "^2.0.0"
+pytest-xdist = { version = "^3.0.2", extras = ["psutil"] }
+ipykernel = "^6.23.1"
+starknet-devnet = "^0.5.4"
+starknet-py = "^0.16"
+pytest = "^7.3.2"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.isort]
+profile = "black"
+
+[tool.autoflake]
+in_place = true
+remove_unused_variables = true
+remove_all_unused_imports = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

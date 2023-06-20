@@ -1,0 +1,22 @@
+{
+  "bitcoin": {
+    "address": "0x6cac00e7c863d674a582a365b2a6b2aaba2da36c64c8b914e5a56adda522800",
+    "tx": "0x6c6d64696016e4a5c860de20202424bc34db54f96e3ef0eb4a584149783339f",
+    "artifact": "build/ERC20.json"
+  },
+  "pool_factory": {
+    "address": "0x4cb0f15ade0812c92b9a97aeccbe7728152dafe88834033b20aacfe539a700c",
+    "tx": "0x5f1808213e7ef9473da9c8fabd85bf68389c052e47d4d0967f8756ee171f9a6",
+    "artifact": "build/PoolFactory.json"
+  },
+  "swap_controller": {
+    "address": "0x297e040c2dd0c57647d039ad5508c1e85dc5e1523224ff827a25e319cb30827",
+    "tx": "0x331ed6210d051657e91fd696fb837640ba86483ab82c05fda00c9b1c155542a",
+    "artifact": "build/SwapController.json"
+  },
+  "pool": {
+    "address": "0x779a1ccb8e57317aff22fed8839c2893438757ecb785e8a9dbcd9c3765c102a",
+    "tx": "0x62349040d27b720fea2280010e8f18154db94415310d779a8fd4bc8e6bfd7c0",
+    "artifact": "build/Pool.json"
+  }
+}
