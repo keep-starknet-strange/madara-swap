@@ -44,7 +44,7 @@ NETWORKS = {
     },
 }
 
-NETWORK = NETWORKS[os.getenv("STARKNET_NETWORK", "devnet")]
+NETWORK = NETWORKS[os.getenv("STARKNET_NETWORK", "katana")]
 NETWORK["account_address"] = os.environ.get(
     f"{NETWORK['name'].upper()}_ACCOUNT_ADDRESS"
 ) or os.environ.get("ACCOUNT_ADDRESS")

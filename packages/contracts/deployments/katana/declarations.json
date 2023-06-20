@@ -2,5 +2,6 @@
   "ERC20": "0x76927a7de4cf94327fb0a74097bb43b8d28ea062e35abfde9ab189d1ef16ee",
   "PoolFactory": "0x5f98a16cec543b2173e575a8321c38fc675f9ab13489f2d53e8daa4877ed7f6",
   "Pool": "0x6f614805750cf73adcf3bc52ce7978aae68ea5e9e494115a88d83a455e246b2",
-  "SwapController": "0x2fe58e83dec6bca9316a1e1d64c12178a1e6b60eea671ff31d9dfe1cd6a453c"
+  "SwapController": "0x5a3a4c6436659dff0ab0c0b9c5c8200f4aac9206bcc883daf763962db73f03c",
+  "OpenzeppelinAccount": "0x45e3ac97b1c575540dbf6b6f089f390f00fa98928415bb91a27a43790b52f30"
 }

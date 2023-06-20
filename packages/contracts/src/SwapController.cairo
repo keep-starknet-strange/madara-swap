@@ -32,10 +32,10 @@ func getFactory{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
 @view
 func quote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     amount_token_0: Uint256, reserve_token_0: Uint256, reserve_token_1: Uint256
-) -> (amount_token_0: Uint256) {
-    let (amount_token_0) = SwapController.quote(amount_token_0, reserve_token_0, reserve_token_1);
+) -> (amount_token_1: Uint256) {
+    let (amount_token_1) = SwapController.quote(amount_token_0, reserve_token_0, reserve_token_1);
 
-    return (amount_token_0,);
+    return (amount_token_1,);
 }
 
 @view

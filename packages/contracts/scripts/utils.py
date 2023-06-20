@@ -218,7 +218,11 @@ def dump_deployments(deployments):
 
 
 def get_deployments():
-    return json.load(open(DEPLOYMENTS_DIR / "deployments.json", "r"))
+    deployments = json.load(open(DEPLOYMENTS_DIR / "deployments.json", "r"))
+    return {
+        contract_name: {**deployment, "address": int(deployment["address"], 16)}
+        for contract_name, deployment in deployments.items()
+    }
 
 
 def get_artifact(contract_name):
@@ -390,9 +394,10 @@ async def invoke(contract_name, function_name, *inputs, address=None):
     call = contract.functions[function_name].prepare(*inputs, max_fee=int(1e17))
     logger.info(f"ℹ️  Invoking {contract_name}.{function_name}({json.dumps(inputs)})")
     response = await account.execute(call, max_fee=int(1e17))
-    await wait_for_transaction(response.transaction_hash)
+    status = await wait_for_transaction(response.transaction_hash)
+    status = "✅" if status == TransactionStatus.ACCEPTED_ON_L2 else "❌"
     logger.info(
-        f"✅ {contract_name}.{function_name} invoked at tx: %s",
+        f"{status} {contract_name}.{function_name} invoked at tx: %s",
         hex(response.transaction_hash),
     )
     return response.transaction_hash
@@ -459,5 +464,4 @@ async def wait_for_transaction(*args, **kwargs):
         if status is not None:
             status = TransactionStatus(status)
         elapsed = (datetime.now() - start).total_seconds()
-    return status
     return status
