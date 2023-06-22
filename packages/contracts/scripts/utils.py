@@ -11,6 +11,15 @@ from typing import Union, cast
 
 import requests
 from marshmallow import EXCLUDE
+from scripts.constants import (
+    BUILD_DIR,
+    CONTRACTS,
+    DEPLOYMENTS_DIR,
+    ETH_TOKEN_ADDRESS,
+    NETWORK,
+    RPC_CLIENT,
+    SOURCE_DIR,
+)
 from starknet_py.common import create_compiled_contract
 from starknet_py.contract import Contract, InvokeResult
 from starknet_py.hash.address import compute_address
@@ -28,16 +37,6 @@ from starknet_py.net.models.transaction import Declare, Invoke
 from starknet_py.net.schemas.rpc import DeclareTransactionResponseSchema
 from starknet_py.net.signer.stark_curve_signer import KeyPair
 from starkware.starknet.public.abi import get_selector_from_name
-
-from scripts.constants import (
-    BUILD_DIR,
-    CONTRACTS,
-    DEPLOYMENTS_DIR,
-    ETH_TOKEN_ADDRESS,
-    NETWORK,
-    RPC_CLIENT,
-    SOURCE_DIR,
-)
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -150,7 +149,7 @@ async def fund_address(address: Union[int, str], amount: float):
             )
         prepared = eth_contract.functions["transfer"].prepare(address, int(amount))
         # TODO: remove when madara has a regular default account
-        if NETWORK["name"] == "madara" and account.address == 1:
+        if NETWORK["name"] in ["madara", "sharingan"] and account.address == 1:
             transaction = Invoke(
                 calldata=[
                     prepared.to_addr,
@@ -429,7 +428,7 @@ async def wait_for_transaction(*args, **kwargs):
         0.1
         if NETWORK["name"] in ["devnet", "katana"]
         else 6
-        if NETWORK["name"] == "madara"
+        if NETWORK["name"] in ["madara", "sharingan"]
         else 15,
     )
     max_wait = kwargs.get(
