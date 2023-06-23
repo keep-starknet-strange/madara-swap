@@ -27,7 +27,8 @@ async def main():
         f"ℹ️  Connected to CHAIN_ID {NETWORK['chain_id'].value.to_bytes(ceil(log(NETWORK['chain_id'].value, 256)), 'big')} "
         f"with RPC {RPC_CLIENT.url}"
     )
-    if NETWORK["name"] in ["madara", "sharingan"]:
+    account = await get_starknet_account()
+    if NETWORK["name"] in ["madara", "sharingan"] and account.address == 1:
         await deploy_starknet_account(amount=100)
     account = await get_starknet_account()
     logger.info(f"ℹ️  Using account {hex(account.address)} as deployer")
@@ -95,20 +96,38 @@ async def main():
     ).balance
     btc_eth = 15.66
     amount_eth = int(min(balance_btc * btc_eth, balance_eth) * 0.5)
-    amount_btc = int(amount_eth * btc_eth)
+    amount_btc = int(amount_eth / btc_eth)
 
+    current_allowance_eth = (
+        await call(
+            "ERC20",
+            "allowance",
+            account.address,
+            deployments["SwapController"]["address"],
+            address=ETH_TOKEN_ADDRESS,
+        )
+    ).remaining
     await invoke(
         "ERC20",
         "increaseAllowance",
         deployments["SwapController"]["address"],  # spender_address
-        int(2**256 - 1),  # added_value
+        int(2**256 - 1) - current_allowance_eth,  # added_value
         address=ETH_TOKEN_ADDRESS,
     )
+    current_allowance_btc = (
+        await call(
+            "ERC20",
+            "allowance",
+            account.address,
+            deployments["SwapController"]["address"],
+            address=deployments["Bitcoin"]["address"],
+        )
+    ).remaining
     await invoke(
         "ERC20",
         "increaseAllowance",
         deployments["SwapController"]["address"],  # spender_address
-        int(2**256 - 1),  # added_value
+        int(2**256 - 1) - current_allowance_btc,  # added_value
         address=deployments["Bitcoin"]["address"],
     )
 

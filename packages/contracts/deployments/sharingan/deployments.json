@@ -1,17 +1,17 @@
 {
   "Bitcoin": {
-    "address": "0x2aa4e85e8d9da81e2c095512062cd9c0ffa7b1f5e928b85f53998303494a62c",
-    "tx": "0x47558e45192da36f4bff89ab96dcef9f69a6a51b27e6423723f8686ddbf20e3",
+    "address": "0x3ebd5b5cb10d4c375460edfca398112d4512fb3cc78484a8c265af2cf1e5282",
+    "tx": "0x21733bbc832a173a6eb3106470cccdbeda0af0701144f900c6cc8d560e2e700",
     "artifact": "build/ERC20.json"
   },
   "PoolFactory": {
-    "address": "0x459de3283e2883cb8e302d52531e5d8deb4e6a8e5b5c788a41f63006fef911b",
-    "tx": "0x6d8c2a19a668d792f17d914fb46fa4ccd646aa43c34ba78aa25a7c043941429",
+    "address": "0x2e282c90ee9edb412b2b159db823ed34a2e273f2b9d0e7d16861937d65eef0d",
+    "tx": "0x252bb609f6e3017c76f171fe5ed6ccb153eb42c6231a4887846ab3b76f21d67",
     "artifact": "build/PoolFactory.json"
   },
   "SwapController": {
-    "address": "0x1ea3cd78719d79104bf92a7535eec1380925d5fa497dcad1b79447c061279b0",
-    "tx": "0xa696f16dfeb067c3394706b4360e94bfdae1e8f4791bf94329a58cd1b6b585",
+    "address": "0x19d926f456d13e6e187d22de9eba3af85560aa922a1de6d852678544f04758a",
+    "tx": "0x3874c63a6964592e1f5ea56debda49da28c062115ba0d0ac5467ae1f0d0e6cf",
     "artifact": "build/SwapController.json"
   }
 }

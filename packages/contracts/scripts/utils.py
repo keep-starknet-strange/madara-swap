@@ -11,15 +11,6 @@ from typing import Union, cast
 
 import requests
 from marshmallow import EXCLUDE
-from scripts.constants import (
-    BUILD_DIR,
-    CONTRACTS,
-    DEPLOYMENTS_DIR,
-    ETH_TOKEN_ADDRESS,
-    NETWORK,
-    RPC_CLIENT,
-    SOURCE_DIR,
-)
 from starknet_py.common import create_compiled_contract
 from starknet_py.contract import Contract, InvokeResult
 from starknet_py.hash.address import compute_address
@@ -37,6 +28,16 @@ from starknet_py.net.models.transaction import Declare, Invoke
 from starknet_py.net.schemas.rpc import DeclareTransactionResponseSchema
 from starknet_py.net.signer.stark_curve_signer import KeyPair
 from starkware.starknet.public.abi import get_selector_from_name
+
+from scripts.constants import (
+    BUILD_DIR,
+    CONTRACTS,
+    DEPLOYMENTS_DIR,
+    ETH_TOKEN_ADDRESS,
+    NETWORK,
+    RPC_CLIENT,
+    SOURCE_DIR,
+)
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -176,10 +177,11 @@ async def fund_address(address: Union[int, str], amount: float):
         else:
             tx = await prepared.invoke(max_fee=int(1e17))
 
-        await wait_for_transaction(tx.hash)
+        status = await wait_for_transaction(tx.hash)
+        status = "✅" if status == TransactionStatus.ACCEPTED_ON_L2 else "❌"
         balance = (await eth_contract.functions["balanceOf"].call(address)).balance  # type: ignore
         logger.info(
-            f"{amount / 1e18} ETH sent from {hex(account.address)} to {hex(address)}; new balance {balance / 1e18}"
+            f"{status} {amount / 1e18} ETH sent from {hex(account.address)} to {hex(address)}; new balance {balance / 1e18}"
         )
 
 
@@ -305,7 +307,7 @@ async def deploy_starknet_account(private_key=None, amount=1) -> Account:
     )
     status = await wait_for_transaction(res.hash)
     if status == TransactionStatus.REJECTED:
-        logger.warning("⚠️  Transaction REJECTED")
+        logger.warning("❌ Transaction REJECTED")
 
     logger.info(f"✅ Account deployed at address {hex(res.account.address)}")
     NETWORK["account_address"] = hex(res.account.address)
@@ -355,8 +357,9 @@ async def declare(contract_name):
         DeclareTransactionResponseSchema().load(res, unknown=EXCLUDE),
     )
 
-    await wait_for_transaction(resp.transaction_hash)
-    logger.info(f"✅ {contract_name} class hash: {hex(resp.class_hash)}")
+    status = await wait_for_transaction(resp.transaction_hash)
+    status = "✅" if status == TransactionStatus.ACCEPTED_ON_L2 else "❌"
+    logger.info(f"{status} {contract_name} class hash: {hex(resp.class_hash)}")
     return resp.class_hash
 
 
@@ -371,9 +374,10 @@ async def deploy(contract_name, *args):
         constructor_args=list(args),
         max_fee=int(1e17),
     )
-    await wait_for_transaction(deploy_result.hash)
+    status = await wait_for_transaction(deploy_result.hash)
+    status = "✅" if status == TransactionStatus.ACCEPTED_ON_L2 else "❌"
     logger.info(
-        f"✅ {contract_name} deployed at: {hex(deploy_result.deployed_contract.address)}"
+        f"{status} {contract_name} deployed at: {hex(deploy_result.deployed_contract.address)}"
     )
     return {
         "address": deploy_result.deployed_contract.address,
@@ -427,13 +431,15 @@ async def wait_for_transaction(*args, **kwargs):
         "check_interval",
         0.1
         if NETWORK["name"] in ["devnet", "katana"]
-        else 6
-        if NETWORK["name"] in ["madara", "sharingan"]
+        else 1
+        if NETWORK["name"] in ["madara"]
         else 15,
     )
     max_wait = kwargs.get(
         "max_wait",
-        60 * 5 if NETWORK["name"] not in ["devnet", "katana", "madara"] else 30,
+        60 * 5
+        if NETWORK["name"] not in ["devnet", "katana", "madara", "sharingan"]
+        else 30,
     )
     transaction_hash = args[0] if args else kwargs["tx_hash"]
     status = None
@@ -442,7 +448,8 @@ async def wait_for_transaction(*args, **kwargs):
         status not in [TransactionStatus.ACCEPTED_ON_L2, TransactionStatus.REJECTED]
         and elapsed < max_wait
     ):
-        logger.info(f"ℹ️  Current status: {status}")
+        if elapsed > 0:
+            logger.info(f"ℹ️  Current status: {status}")
         logger.info(f"ℹ️  Sleeping for {check_interval}s")
         time.sleep(check_interval)
         response = requests.post(

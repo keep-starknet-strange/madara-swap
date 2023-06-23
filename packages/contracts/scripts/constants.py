@@ -15,6 +15,7 @@ class ChainId(Enum):
     testnet = int.from_bytes(b"SN_GOERLI", "big")
     testnet2 = int.from_bytes(b"SN_GOERLI2", "big")
     katana = int.from_bytes(b"KATANA", "big")
+    sharingan = int.from_bytes(b"sn_sharingan", "big")
 
 
 NETWORKS = {
@@ -22,7 +23,7 @@ NETWORKS = {
         "name": "sharingan",
         "explorer_url": "",
         "rpc_url": os.getenv("SHARINGAN_RPC_URL"),
-        "chain_id": ChainId.testnet,
+        "chain_id": ChainId.sharingan,
     },
     "madara": {
         "name": "madara",
