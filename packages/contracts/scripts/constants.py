@@ -1,7 +1,9 @@
+import json
 import os
 from enum import Enum
 from pathlib import Path
 
+import requests
 from dotenv import load_dotenv
 from starknet_py.net.full_node_client import FullNodeClient
 
@@ -10,38 +12,26 @@ load_dotenv()
 ETH_TOKEN_ADDRESS = 0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7
 
 
-# TODO: get CHAIN_ID from RPC endpoint when starknet-py doesn't expect an enum
-class ChainId(Enum):
-    testnet = int.from_bytes(b"SN_GOERLI", "big")
-    testnet2 = int.from_bytes(b"SN_GOERLI2", "big")
-    katana = int.from_bytes(b"KATANA", "big")
-    sharingan = int.from_bytes(b"sn_sharingan", "big")
-
-
 NETWORKS = {
     "sharingan": {
         "name": "sharingan",
         "explorer_url": "",
         "rpc_url": os.getenv("SHARINGAN_RPC_URL"),
-        "chain_id": ChainId.sharingan,
     },
     "madara": {
         "name": "madara",
         "explorer_url": "",
         "rpc_url": "http://127.0.0.1:9944",
-        "chain_id": ChainId.testnet,
     },
     "katana": {
         "name": "katana",
         "explorer_url": "",
         "rpc_url": "http://127.0.0.1:5050",
-        "chain_id": ChainId.katana,
     },
     "devnet": {
         "name": "devnet",
         "explorer_url": "",
         "rpc_url": "http://127.0.0.1:5050/rpc",
-        "chain_id": ChainId.testnet,
     },
 }
 
@@ -55,7 +45,24 @@ NETWORK["private_key"] = os.environ.get(
 
 
 RPC_CLIENT = FullNodeClient(node_url=NETWORK["rpc_url"])
+try:
+    response = requests.post(
+        RPC_CLIENT.url,
+        json={
+            "jsonrpc": "2.0",
+            "method": f"starknet_chainId",
+            "params": [],
+            "id": 0,
+        },
+    )
+    payload = json.loads(response.text)
 
+    class ChainId(Enum):
+        chain_id = int(payload["result"], 16)
+
+    NETWORK["chain_id"] = ChainId.chain_id
+except:
+    pass
 
 SOURCE_DIR = Path("src")
 CONTRACTS = {p.stem: p for p in list(SOURCE_DIR.glob("**/*.cairo"))}
