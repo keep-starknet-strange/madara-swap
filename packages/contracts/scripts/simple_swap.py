@@ -62,7 +62,7 @@ async def main():
     ).balance
     amount_eth = int(min(current_balance_eth, reserve_eth) / 100)
     logger.info(
-        f"ℹ️ Swapping {amount_eth / 1e18} ETH for BTC with account {account.address}"
+        f"ℹ️  Swapping {amount_eth / 1e18} ETH for BTC with account {account.address}"
     )
     current_allowance = (
         await call(
@@ -110,7 +110,7 @@ async def main():
         )
     ).balance
     logger.info(
-        f"ℹ️ Swapped {amount_eth / 1e18} ETH for {(new_balance_btc - current_balance_btc) / 1e18} BTC with account {account.address}"
+        f"ℹ️  Swapped {amount_eth / 1e18} ETH for {(new_balance_btc - current_balance_btc) / 1e18} BTC with account {account.address}"
     )
 
 

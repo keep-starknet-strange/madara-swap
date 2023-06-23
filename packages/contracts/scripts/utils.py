@@ -97,7 +97,7 @@ async def get_starknet_account(
             )
     else:
         logger.warning(
-            f"⚠️ Unable to verify public key for account at address 0x{address:x}"
+            f"⚠️  Unable to verify public key for account at address 0x{address:x}"
         )
 
     return Account(
