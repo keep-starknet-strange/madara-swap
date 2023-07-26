@@ -20,5 +20,4 @@ RUN poetry install
 RUN python scripts/compile_madara_swap.py
 
 # Deploy madara swap
-ENV STARKNET_NETWORK=sharingan
 CMD ["python", "scripts/deploy_madara_swap.py"]

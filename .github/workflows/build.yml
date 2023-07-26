@@ -26,3 +26,4 @@ jobs:
           push: true
           tags: ghcr.io/keep-starknet-strange/madara-swap/contracts:latest
           context: ./packages/contracts
+          platforms: linux/amd64,linux/arm64
